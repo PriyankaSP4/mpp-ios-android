@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.jetbrains.handson.mpp.mobile.api.FaresResponse
 import kotlinx.android.synthetic.main.activity_main.*
 
 

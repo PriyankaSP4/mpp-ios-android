@@ -1,5 +1,6 @@
 package com.jetbrains.handson.mpp.mobile
 
+import com.jetbrains.handson.mpp.mobile.api.FaresResponse
 import kotlinx.coroutines.CoroutineScope
 
 interface ApplicationContract {
