@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), ApplicationContract.View,
     }
 
     override fun showData(journeys: List<JourneyOption>) {
-        journeys.drop(journeys.size)
+        journeysForRecyclerView.clear()
         for (item in journeys) {
             journeysForRecyclerView.add(
                 Journey(

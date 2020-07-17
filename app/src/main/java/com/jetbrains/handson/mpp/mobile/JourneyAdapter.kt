@@ -47,8 +47,6 @@ class JourneyAdapter(private var journeyList: List<Journey>, val presenter: Appl
         }
     }
 
-
-
     fun updateData(data: List<Journey>) {
         journeyList = data
         notifyDataSetChanged()
