@@ -83,14 +83,14 @@ class ApplicationPresenter : ApplicationContract.Presenter() {
         }
     }
 
-     fun onBuyButton(
+    override fun onBuyButton(
         outbound: String,
         inbound: String,
         month: Int,
         day: Int,
-        hour: Int,
-        minutes: Int,
-        returnBool: Boolean = true
+        hour: String,
+        minutes: String,
+        returnBool: Boolean
     ) {
         val returnSymbol = if (returnBool) {
             "y"
