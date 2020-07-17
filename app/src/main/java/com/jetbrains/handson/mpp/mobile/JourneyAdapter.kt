@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jetbrains.handson.mpp.mobile.api.JourneyOption
 import kotlinx.android.synthetic.main.journeys_list_layout.view.*
 
 class JourneyAdapter(private var journeyList: List<Journey>) : RecyclerView.Adapter<JourneyAdapter.MyViewHolder>() {
@@ -17,7 +16,7 @@ class JourneyAdapter(private var journeyList: List<Journey>) : RecyclerView.Adap
 
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bindItems(journeyList[position].depTime, journeyList[position].arrTime, journeyList[position].duration, journeyList[position].date) { journeyList[position].button }
+        holder.bindItems(journeyList[position].inbound, journeyList[position].outbound, journeyList[position].depTime, journeyList[position].arrTime, journeyList[position].duration, journeyList[position].date) { journeyList[position].button }
     }
 
     //this method is giving the size of the list
@@ -27,13 +26,21 @@ class JourneyAdapter(private var journeyList: List<Journey>) : RecyclerView.Adap
 
     //the class is holding the list view
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(inbound: String, outbound: String, duration: String, date: String, onBuyButton: () -> Unit) {
-            itemView.departureTime.text = inbound
-            itemView.arrivalTime.text = outbound
+        fun bindItems(
+            inbound: String,
+            outbound: String,
+            depTime: String,
+            arrTime: String,
+            duration: String,
+            date: String,
+            function: () -> String
+        ) {
+            itemView.departureTime.text = depTime.substring(11,16)
+            itemView.arrivalTime.text = arrTime.substring(11,16)
             itemView.duration.text = duration
             itemView.date.text = date
-            itemView.go_to_buy.setOnClickListener {
-                onBuyButton()
+            itemView.go_to_buy_button.setOnClickListener {
+                ApplicationPresenter().onBuyButton(outbound, inbound, depTime.substring(5, 7).toInt(), depTime.substring(8, 10).toInt(), depTime.substring(11, 13).toInt(), depTime.substring(14, 16).toInt(), true)
             }
         }
     }

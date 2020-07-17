@@ -16,7 +16,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/get_live_train_times"
-        android:textColor="#00574B"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -62,8 +61,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_text"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#8B0000"
         app:layout_constraintTop_toBottomOf="@id/inbound_spinner_control"
         app:layout_constrainedWidth="true"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -72,7 +69,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/journeys_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

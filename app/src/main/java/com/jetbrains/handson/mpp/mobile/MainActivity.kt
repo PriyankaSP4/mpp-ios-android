@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity(), ApplicationContract.View,
 
     AdapterView.OnItemSelectedListener {
     val journeysForRecyclerView = ArrayList<Journey>()
-    val ticketSiteData = ArrayList<Array<String>>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,18 +66,19 @@ class MainActivity : AppCompatActivity(), ApplicationContract.View,
             adapter.updateData(journeysForRecyclerView)
         }
 
-        val ticketsButton: Button = findViewById(go_to_buy_button.id)
-        button.setOnClickListener {
-            val origin = outboundSpinner.selectedItem.toString()
-            val destination = inboundSpinner.selectedItem.toString()
-            val time = LocalDateTime.now().plusMinutes(5).toString()
-            presenter.onBuyButton(origin, destination, time)
-        }
+
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
-
+    /*
+    val ticketsButton: Button = findViewById(go_to_buy_button.id)
+    val ticketsButtonPosition = ticketsButton.getAdapterPosition()
+    button.setOnClickListener {
+        val ticket: <Ticket> = ticketSiteData[ticketsButton.getPosition()]
+        presenter.onBuyButton(ticket.inbound, ticket.outbound, ticket.month, ticket.day, ticket.hour, ticket.minute, ticket.returnBool)
+    }
+    */
     override fun onItemSelected(parent: AdapterView<*>?, arg1: View?, position: Int, id: Long) {
         parent?.getItemAtPosition(position)
 
@@ -92,18 +92,13 @@ class MainActivity : AppCompatActivity(), ApplicationContract.View,
         journeys.drop(journeys.size)
         for (item in journeys) {
             journeysForRecyclerView.add(
-                Journey(
-                    item.departureTime.substring(11, 16),
-                    item.arrivalTime.substring(11, 16),
+                Journey(item.originStation.crs,
+                    item.destinationStation.crs,
+                    item.departureTime,
+                    item.arrivalTime,
                     item.journeyDurationInMinutes.toString() + " min", item.departureTime.substring(8,10)+"/"+item.departureTime.substring(5,7)+"/"+item.departureTime.substring(0,4)
                 )
             )
-            ticketSiteData.add(Array(item.originStation.crs,
-                inbound: String,
-                month: Int,
-                day: Int,
-                hour: Int,
-                minutes: Int,))
         }
     }
 
