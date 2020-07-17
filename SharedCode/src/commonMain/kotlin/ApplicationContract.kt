@@ -25,5 +25,6 @@ interface ApplicationContract {
             minutes: Int,
             returnBool: Boolean
         )
+        abstract val stations: MutableList<String>
     }
 }

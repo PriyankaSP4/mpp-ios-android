@@ -23,7 +23,7 @@ class ApplicationPresenter : ApplicationContract.Presenter() {
         mutableMapOf<String, String>()
 
 
-    val stations = mutableListOf<String>()
+    override val stations = mutableListOf<String>()
 
     init {
         launch {
