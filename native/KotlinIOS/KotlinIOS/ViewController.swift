@@ -1,7 +1,7 @@
 import UIKit
 import SharedCode
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
     @IBOutlet private var label: UILabel!
 
@@ -11,9 +11,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     private let presenter: ApplicationContractPresenter = ApplicationPresenter()
     private var data: [JourneyOption]?
     
+    
+    @IBOutlet weak var outboundAutocomplete: UITextField!
+    @IBOutlet weak var inboundAutocomplete: UITextField!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var Submit: UIButton!
     var pickerData:[String] = [String]()
+    
+    var autoCompleteCharacterCount = 0
+     var timer = Timer()
     
     
     private func setUpTable() {
@@ -42,8 +48,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     
     @IBAction func onButtonPress(_ sender: Any) {
-        let outboundSelection = "Birmingham New Street"
-        let inboundSelection = "London Euston"
+        let outboundSelection = self.outboundAutocomplete.text ?? "Canley"
+        let inboundSelection =  self.inboundAutocomplete.text ?? "London Euston"
+
         let date = Date()
         let calendar = Calendar.current
         let year = calendar.component(.year, from: date)
@@ -75,7 +82,82 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+            var subString = (textField.text!.capitalized as NSString).replacingCharacters(in: range, with: string) // 2
+            subString = formatSubstring(subString: subString)
+            
+            if subString.count == 0 { // 3 when a user clears the textField
+                resetValues(textField)
+            } else {
+                searchAutocompleteEntriesWIthSubstring(textField, substring: subString) //4
+            }
+            return true
+        }
     
+    func formatSubstring(subString: String) -> String {
+        let formatted = String(subString.dropLast(autoCompleteCharacterCount)).lowercased().capitalized //5
+        return formatted
+    }
+        
+        
+        
+    func resetValues(_ textField: UITextField) {
+        autoCompleteCharacterCount = 0
+        textField.text = ""
+    }
+    
+    func searchAutocompleteEntriesWIthSubstring(_ textField:UITextField, substring: String) {
+           let userQuery = substring
+           let suggestions = getAutocompleteSuggestions(userText: substring) //1
+           
+           if suggestions.count > 0 {
+               timer = .scheduledTimer(withTimeInterval: 0.01, repeats: false, block: { (timer) in //2
+                   let autocompleteResult = self.formatAutocompleteResult(substring: substring, possibleMatches: suggestions) // 3
+                self.putColourFormattedTextInTextField(textField: textField, autocompleteResult: autocompleteResult, userQuery : userQuery) //4
+                self.moveCaretToEndOfUserQueryPosition(textField: textField, userQuery: userQuery) //5
+               })
+           } else {
+               timer = .scheduledTimer(withTimeInterval: 0.01, repeats: false, block: { (timer) in //7
+                   textField.text = substring
+               })
+               autoCompleteCharacterCount = 0
+           }
+    }
+    
+    
+    func getAutocompleteSuggestions(userText: String) -> [String]{
+        var possibleMatches: [String] = []
+        for item in presenter.stations { //2
+            if let station = item as? NSString {
+                let substringRange :NSRange! = station.range(of: userText)
+                
+                if (substringRange.location == 0)
+                {
+                    possibleMatches.append(station as String)
+                }
+            }
+        }
+        return possibleMatches
+    }
+    
+    func putColourFormattedTextInTextField(textField: UITextField, autocompleteResult: String, userQuery : String) {
+        let colouredString: NSMutableAttributedString = NSMutableAttributedString(string: userQuery + autocompleteResult)
+        colouredString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.green, range: NSRange(location: userQuery.count,length:autocompleteResult.count))
+        textField.attributedText = colouredString
+    }
+    func moveCaretToEndOfUserQueryPosition(textField: UITextField, userQuery : String) {
+        if let newPosition = textField.position(from: textField.beginningOfDocument, offset: userQuery.count) {
+            textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+        }
+        let selectedRange: UITextRange? = textField.selectedTextRange
+        textField.offset(from: textField.beginningOfDocument, to: (selectedRange?.start)!)
+    }
+    func formatAutocompleteResult(substring: String, possibleMatches: [String]) -> String {
+        var autoCompleteResult = possibleMatches[0]
+        autoCompleteResult.removeSubrange(autoCompleteResult.startIndex..<autoCompleteResult.index(autoCompleteResult.startIndex, offsetBy: substring.count))
+        autoCompleteCharacterCount = autoCompleteResult.count
+        return autoCompleteResult
+    }
 }
 
 
